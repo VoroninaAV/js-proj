@@ -62,6 +62,8 @@ function getAvgDataForChart(hourly){
 
 function createAirPollutionChartJS(data) {
     const ctx = createNode('canvas')
+    ctx.width=150
+    ctx.height=100
     new Chart(ctx, {
         type: 'bar',
         data: {
@@ -107,6 +109,7 @@ fetch(API_URL_GEO_DATA)
                 .then((resp)=>resp.json())
                 .then((data)=>{
                     const daily = getAvgDataForChart(data.hourly)
+                    append(divPlace, createAirPollutionTable(daily, data.hourly_units))
                     append(divPlace, createAirPollutionChartJS(daily))
                 })
             }

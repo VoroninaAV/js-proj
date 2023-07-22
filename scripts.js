@@ -14,42 +14,55 @@ function append(parent, element) {
     return parent.appendChild(element)
 }
 
+function createAirPollutionTable(hourly, hourly_units) {
+    let table = createNode('table')
+    let cols = Object.keys(hourly_units)
+    let tr = createNode('tr')
+    cols.forEach(x => {
+        let th = createNode('th')
+        th.innerHTML = `${x} (${hourly_units[x]})`
+        append(tr, th)
+    })
+    append(table, tr)
+    for (let i = 0; i < hourly.time.length; i++) {
+        let tr = createNode('tr')
+        cols.forEach(x => {
+            console.log(hourly.time[i])
+            let td = createNode('td')
+            td.innerHTML = `${hourly[x][i]}`
+         
+            append(tr, td)
+        })
+        append(table, tr)
+    }
+    return table
+}
+
 fetch(API_URL_GEO_DATA)
 .then((resp)=>resp.json())
 .then((data)=>{
     let placeColl=data.response.GeoObjectCollection.featureMember
-    return placeColl.map((x) => {
-        let crd=x.GeoObject.Point.pos.split(' ')
-        
-        let divPlace=createNode('div')
-        
-        let p=createNode('p')
-        p.innerHTML=`${x.GeoObject.name}, ${x.GeoObject.description??"-"}`
+    if (placeColl.length > 0)
+        return placeColl.map((x) => {
+            let crd = x.GeoObject.Point.pos.split(' ') 
+            if (crd !== 'undefined') {
+                let divPlace = createNode('div')
+                
+                let h1=createNode('h1')
+                h1.innerHTML=`${x.GeoObject.name}, ${x.GeoObject.description??"-"}`
 
-        append(divPlace, p)
-        append(div, divPlace)
-
-        let url=`${API_OPEN_METEO}&latitude=${crd[1]}&longitude=${crd[0]}` 
-        fetch(url)
-        .then((resp)=>resp.json())
-        .then((data)=>{
-            let hourly=data.hourly
-            let hourly_units=data.hourly_units
-            console.log(hourly)
-            console.log(hourly_units)
-            let len=hourly.time.length
-            let ui=createNode('ui')
-            for (let i = 0; i < len; i++) {
-                let li = createNode('li')
-                let span = createNode('span')
-                //время : количество частиц pm10 : количество частиц pm2_5
-                span.innerHTML = `${hourly.time[i]} : ${hourly.pm10[i]} ${hourly_units.pm10} : ${hourly.pm2_5[i]} ${hourly_units.pm2_5}`
-                append(li, span)
-                append(ui, li)
+                append(divPlace, h1)
+                append(div, divPlace)
+                // получение инфо о загрязнении
+                let url=`${API_OPEN_METEO}&latitude=${crd[1]}&longitude=${crd[0]}`  
+                fetch(url)
+                .then((resp)=>resp.json())
+                .then((data)=>{
+                    let table=createAirPollutionTable(data.hourly, data.hourly_units)
+                    append(divPlace, table)
+                })
             }
-            append(divPlace, ui)
         })
-    })
 })
 .catch(function(error) {
     console.log(error);

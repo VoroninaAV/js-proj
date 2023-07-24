@@ -27,7 +27,6 @@ function createAirPollutionTable(hourly, hourly_units) {
     for (let i = 0; i < hourly.time.length; i++) {
         let tr = createNode('tr')
         cols.forEach(x => {
-            console.log(hourly.time[i])
             let td = createNode('td')
             td.innerHTML = `${hourly[x][i]}`
          
@@ -61,26 +60,32 @@ function getAvgDataForChart(hourly){
 }
 
 function createAirPollutionChartJS(data) {
-    const ctx = createNode('canvas')
-    ctx.width=150
-    ctx.height=100
-    new Chart(ctx, {
+    const canvas = createNode('canvas')
+    new Chart(canvas, {
         type: 'bar',
         data: {
             labels: data.time,
             datasets: [{
-                label: 'pm2_5',
-                data: data.pm2_5, 
+                label: 'pm10',
+                data: data.pm10, 
                 borderWidth: 1
             },
             {
-                label: 'pm10',
-                data: data.pm10, 
+                label: 'pm2_5',
+                data: data.pm2_5, 
                 borderWidth: 1
             }]
         }
     })
-    return ctx
+    return canvas
+}
+
+function createAirPollutionChartCanvas(data) {
+    const canvas = createNode('canvas')
+    canvas.width=1000
+    canvas.height=500
+    renderChart(canvas, data)
+    return canvas
 }
 
 fetch(API_URL_GEO_DATA)
@@ -90,7 +95,6 @@ fetch(API_URL_GEO_DATA)
     if (placeColl.length > 0)
         return placeColl.map((x) => {
             let crd = x.GeoObject.Point.pos.split(' ') 
-            console.log(crd)
             if (crd !== 'undefined') {
                let divPlace = createNode('div')
                  append(div, divPlace)
@@ -110,6 +114,7 @@ fetch(API_URL_GEO_DATA)
                 .then((data)=>{
                     const daily = getAvgDataForChart(data.hourly)
                     append(divPlace, createAirPollutionTable(daily, data.hourly_units))
+                    append(divPlace, createAirPollutionChartCanvas(daily))
                     append(divPlace, createAirPollutionChartJS(daily))
                 })
             }

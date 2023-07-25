@@ -81,9 +81,11 @@ function createAirPollutionChartJS(data) {
 }
 
 function createAirPollutionChartCanvas(data) {
+    
     const canvas = createNode('canvas')
-    canvas.width=1000
-    canvas.height=500
+    canvas.width = document.documentElement.clientWidth;
+    canvas.height = document.documentElement.clientHeight;
+    console.log(this)
     renderChart(canvas, data)
     return canvas
 }

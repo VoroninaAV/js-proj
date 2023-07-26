@@ -15,28 +15,26 @@ function append(parent, element) {
 }
 
 function createAirPollutionTable(hourly, hourly_units) {
-    let table = createNode('table')
-    let cols = Object.keys(hourly_units)
-    let tr = createNode('tr')
+    const table = createNode('table')
+    const cols = Object.keys(hourly_units)
+    const tr = createNode('tr')
     cols.forEach(x => {
-        let th = createNode('th')
+        const th = createNode('th')
         th.innerHTML = `${x} (${hourly_units[x]})`
         append(tr, th)
     })
     append(table, tr)
     for (let i = 0; i < hourly.time.length; i++) {
-        let tr = createNode('tr')
+        const tr = createNode('tr')
         cols.forEach(x => {
-            let td = createNode('td')
+            const td = createNode('td')
             td.innerHTML = `${hourly[x][i]}`
-         
             append(tr, td)
         })
         append(table, tr)
     }
     return table
 }
-
 
 function getAvgDataForChart(hourly){
     const getAverage = (numbers) => {
@@ -45,9 +43,9 @@ function getAvgDataForChart(hourly){
         return sum / length;
     };
 
-    let pm10=[]
-    let pm2_5=[]
-    let time=[]
+    const pm10=[]
+    const pm2_5=[]
+    const time=[]
    
     const n=24
     for(let i=0;i<hourly.time.length;i+=n){
@@ -82,8 +80,8 @@ function createAirPollutionChartJS(data) {
 
 function createAirPollutionChartCanvas(data) {
     const canvas = createNode('canvas')
-    canvas.width = document.documentElement.clientWidth;
-    canvas.height = document.documentElement.clientHeight;
+    canvas.width = document.documentElement.clientWidth
+    canvas.height = document.documentElement.clientHeight
     renderChart(canvas, data)
     return canvas
 }
@@ -91,24 +89,24 @@ function createAirPollutionChartCanvas(data) {
 fetch(API_URL_GEO_DATA)
 .then((resp)=>resp.json())
 .then((data)=>{
-    let placeColl=data.response.GeoObjectCollection.featureMember
+    const placeColl=data.response.GeoObjectCollection.featureMember
     if (placeColl.length > 0)
         return placeColl.map((x) => {
-            let crd = x.GeoObject.Point.pos.split(' ') 
+            const crd = x.GeoObject.Point.pos.split(' ') 
             if (crd !== 'undefined') {
-               let divPlace = createNode('div')
-                 append(div, divPlace)
+                const divPlace = createNode('div')
+                append(div, divPlace)
 
-                let h1=createNode('h1')
+                const h1=createNode('h1')
                 h1.innerHTML=`${x.GeoObject.name}, ${x.GeoObject.description??"-"}`
                 append(divPlace, h1)
                 
-                let p=createNode('p')
+                const p=createNode('p')
                 p.innerHTML=`${crd[0]}, ${crd[1]}`
                 append(divPlace, p)
                
                 // получение инфо о загрязнении
-                let url=`${API_OPEN_METEO}&latitude=${crd[1]}&longitude=${crd[0]}`  
+                const url=`${API_OPEN_METEO}&latitude=${crd[1]}&longitude=${crd[0]}`  
                 fetch(url)
                 .then((resp)=>resp.json())
                 .then((data)=>{
@@ -121,5 +119,7 @@ fetch(API_URL_GEO_DATA)
         })
 })
 .catch(function(error) {
-    console.log(error);
+    const p=createNode('p')
+    p.innerHTML=`${error}`
+    append(div, p)
 })

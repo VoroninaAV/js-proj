@@ -1,0 +1,77 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    background: black;
+}
+
+header {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    height: 55px;
+    background: linear-gradient(to right, #0d5374, #1e5d74);
+    font-weight: bold;
+    color: white;
+    img {
+        max-width: 42px;
+        max-height: 42px;
+        margin: 10px;
+    }
+}
+
+.nav{
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    margin-right: auto;
+}
+
+.gallery {
+    display: grid;
+    height: 100vh;
+    position: relative;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    grid-gap: 4px;
+    margin: 4px;
+    
+    img {
+        object-fit: cover;
+        width: 100%;
+        height: 100%;
+        position: relative;
+        border-radius: 2pt;
+    }
+
+    :nth-child(1) {
+        grid-area: 1 / 1 / span 1 / span 1;
+    }
+    :nth-child(2) {
+        grid-area: 1 / 2 / span 1 / span 1;
+    }
+    :nth-child(3) {
+        grid-area: 2 / 1 / span 1 / span 2;
+    }
+    :nth-child(4) {
+        grid-area: 1 / 3 / span 2 / span 1;
+    }
+    :nth-child(5) {
+        grid-area: 3 / 3 / span 1 / span 1;
+    }
+    :nth-child(6) {
+        grid-area: 1 / 4 / span 1 / span 1;
+    }
+    :nth-child(7) {
+        grid-area: 2 / 4 / span 2 / span 1;
+    }
+    :nth-child(8) {
+        grid-area: 3 / 1 / span 2 / span 2;
+    }
+    :nth-child(9) {
+        grid-area: 4 / 3 / span 1 / span 2;
+    }
+}

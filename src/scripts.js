@@ -1,10 +1,13 @@
-let place_name='Тюмень' // todo: запросить у пользователя 
-
-const API_KEY_YANDEX = '4c1c0bd1-f605-4dfd-afa4-d0770a7442a8'
-const API_URL_GEO_DATA = `https://geocode-maps.yandex.ru/1.x/?apikey=${API_KEY_YANDEX}&geocode=${place_name}&format=json`
-const API_OPEN_METEO = `https://air-quality-api.open-meteo.com/v1/air-quality?hourly=pm10,pm2_5`
-
 const div = document.getElementById('air-pollution')
+
+document.getElementById('get-info').addEventListener('click', function () {
+    const place=document.getElementById('place-name');
+    if (place.value.length) {
+        getAndShowInfo(place.value)
+    } else {
+        div.innerHTML = 'Укажите название места';
+    }
+})
 
 function createNode(element) {
     return document.createElement(element)
@@ -86,40 +89,54 @@ function createAirPollutionChartCanvas(data) {
     return canvas
 }
 
-fetch(API_URL_GEO_DATA)
-.then((resp)=>resp.json())
-.then((data)=>{
-    const placeColl=data.response.GeoObjectCollection.featureMember
-    if (placeColl.length > 0)
-        return placeColl.map((x) => {
-            const crd = x.GeoObject.Point.pos.split(' ') 
-            if (crd !== 'undefined') {
-                const divPlace = createNode('div')
-                append(div, divPlace)
 
-                const h1=createNode('h1')
-                h1.innerHTML=`${x.GeoObject.name}, ${x.GeoObject.description??"-"}`
-                append(divPlace, h1)
+function getAndShowInfo(place_name) {
+    const API_KEY_YANDEX = '4c1c0bd1-f605-4dfd-afa4-d0770a7442a8'
+    const API_OPEN_METEO = `https://air-quality-api.open-meteo.com/v1/air-quality?hourly=pm10,pm2_5`
+    const API_URL_GEO_DATA = `https://geocode-maps.yandex.ru/1.x/?apikey=${API_KEY_YANDEX}&geocode=${place_name}&format=json`
+
+    div.innerHTML=''
+
+    fetch(API_URL_GEO_DATA)
+    .then((resp)=>resp.json())
+    .then((data)=>{
+        const placeColl=data.response.GeoObjectCollection.featureMember
+        if (placeColl.length > 0)
+            return placeColl.map((x) => {
+                const crd = x.GeoObject.Point.pos.split(' ') 
+                if (crd !== 'undefined') {
+                    const divPlace = createNode('div')
+                    append(div, divPlace)
+
+                    const h2=createNode('h2')
+                    h2.innerHTML=`${x.GeoObject.name}, ${x.GeoObject.description??"-"}`
+                    append(divPlace, h2)
+                    
+                    const p=createNode('p')
+                    p.innerHTML=`${crd[0]}, ${crd[1]}`
+                    append(divPlace, p)
                 
-                const p=createNode('p')
-                p.innerHTML=`${crd[0]}, ${crd[1]}`
-                append(divPlace, p)
-               
-                // получение инфо о загрязнении
-                const url=`${API_OPEN_METEO}&latitude=${crd[1]}&longitude=${crd[0]}`  
-                fetch(url)
-                .then((resp)=>resp.json())
-                .then((data)=>{
-                    const daily = getAvgDataForChart(data.hourly)
-                    append(divPlace, createAirPollutionTable(daily, data.hourly_units))
-                    append(divPlace, createAirPollutionChartCanvas(daily))
-                    append(divPlace, createAirPollutionChartJS(daily))
-                })
-            }
-        })
-})
-.catch(function(error) {
-    const p=createNode('p')
-    p.innerHTML=`${error}`
-    append(div, p)
-})
+                    // получение инфо о загрязнении
+                    const url=`${API_OPEN_METEO}&latitude=${crd[1]}&longitude=${crd[0]}`  
+                    fetch(url)
+                    .then((resp)=>resp.json())
+                    .then((data)=>{
+                        const daily = getAvgDataForChart(data.hourly)
+                        append(divPlace, createAirPollutionTable(daily, data.hourly_units))
+                        append(divPlace, createAirPollutionChartCanvas(daily))
+                        append(divPlace, createAirPollutionChartJS(daily))
+                    })
+                }
+            })
+        else { 
+            const p=createNode('p')
+            p.innerHTML='Не найдено ни одного подходящего места на карте'
+            append(div, p)
+        }
+    })
+    .catch(function(error) {
+        const p=createNode('p')
+        p.innerHTML=`${error}`
+        append(div, p)
+    })
+}

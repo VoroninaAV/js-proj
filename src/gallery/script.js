@@ -10,17 +10,20 @@ for (let i=0;i<n;i++) {
             contentType: 'image/jpg'
         })
     .then((response) => response.blob())
-    .then((blob) => prepareRandomImage(blob, i))
+    .then((blob) => prepareRandomImage(blob))
 }
 
-function prepareRandomImage(blob, i) {
+function prepareRandomImage(blob) {
     const fr = new FileReader()
     fr.onloadend = function() {
         const dataUrl = fr.result
+        const div = document.createElement('div')
+        div.className="gallery__img-wrapper"
         const img = document.createElement('img')
-        img.src = dataUrl
-        img.className=`img-${i+1}`
-        container.appendChild(img)
+        img.src = dataUrl 
+        img.className='gallery__img'       
+        container.appendChild(div)
+        div.appendChild(img)
     }
     fr.readAsDataURL(blob)
 }

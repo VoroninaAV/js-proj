@@ -16,7 +16,7 @@ header {
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    height: 55px;
+    height: 60px;
     background: linear-gradient(to right, #0d5374, #1e5d74);
     font-weight: bold;
     color: white;
@@ -38,9 +38,9 @@ header {
 .gallery {
     display: grid;
     position: relative;
-    height: 100vh;
+    height: calc(100vh - 80px);
     grid-template-columns: repeat(4, 1fr);
-    grid-template-rows: repeat(4, 1fr);
+    grid-template-rows: repeat(4, calc(25vh - 20px));
     grid-gap: 4px;
     margin: 4px;    
 }

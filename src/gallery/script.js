@@ -4,6 +4,7 @@ const API_KEY='9X7n73EN9aVanLkIBvVOjw==OAJdGhxq889qM2bo'
 const container=document.getElementById("image-container")
 
 const n=9
+
 for (let i=0;i<n;i++) {
     fetch(API, {
             headers: {'X-Api-Key': API_KEY, 'Accept': 'image/jpg'},
